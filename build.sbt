@@ -15,15 +15,15 @@ import sbt.ExclusionRule
  */
 
 val kamonCore = "io.kamon"     %%  "kamon-core" % "0.6.7"
-val opentsdb  = "net.opentsdb" % "opentsdb"     % "2.3.0" excludeAll(
+val opentsdb  = "net.opentsdb" % "opentsdb"     % "2.4.0" excludeAll(
    ExclusionRule(organization = "ch.qos.logback"),
    ExclusionRule(organization = "com.google.gwt"),
-   ExclusionRule(organization = "net.opentsdb", artifact = "opentsdb_gwt_theme"),
+   ExclusionRule(organization = "net.opentsdb", name = "opentsdb_gwt_theme"),
    ExclusionRule(organization = "org.jgrapht"),
    ExclusionRule(organization = "ch.qos.logback")
    )
 
-val hbase = "org.hbase" % "asynchbase" % "1.7.2"
+val hbase = "org.hbase" % "asynchbase" % "1.8.2"
 name := "kamon-opentsdb"
 parallelExecution in Test in Global := false
 crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.1")
@@ -35,3 +35,10 @@ libraryDependencies ++=
     )
 
 resolvers += Resolver.bintrayRepo("kamon-io", "releases")
+
+def akkaDependency(moduleName: String) = Def.setting {
+   scalaBinaryVersion.value match {
+      case "2.10" => "com.typesafe.akka" %% s"akka-$moduleName" % "2.3.16"
+      case "2.11" | "2.12" => "com.typesafe.akka" %% s"akka-$moduleName" % "2.4.16"
+   }
+}
