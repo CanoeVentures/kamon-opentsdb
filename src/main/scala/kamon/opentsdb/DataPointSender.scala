@@ -2,7 +2,6 @@ package kamon.opentsdb
 
 import com.stumbleupon.async.Callback
 import net.opentsdb.core.TSDB
-import net.opentsdb.utils.Config
 import org.hbase.async.HBaseClient
 import org.slf4j.LoggerFactory
 
@@ -27,11 +26,11 @@ trait DataPointSender {
 /**
  * An [[DataPointSender]] implementation that writes directly to HBase using the [[TSDB]] api
  */
-class DirectDataPointSender(quorum : String) extends DataPointSender {
+class DirectDataPointSender(hbaseClientConfig : org.hbase.async.Config) extends DataPointSender {
    val logger = LoggerFactory.getLogger(classOf[DirectDataPointSender])
 
    // TODO Need some way to send in configuration
-   val db = new TSDB(new HBaseClient(quorum), new Config(false))
+   val db = new TSDB(new HBaseClient(hbaseClientConfig), new net.opentsdb.utils.Config(false))
    db.getConfig.setAutoMetric(true)
 
    override def appendPoint(point: DataPoint): Unit = {
