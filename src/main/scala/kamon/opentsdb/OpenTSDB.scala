@@ -38,9 +38,9 @@ class OpenTSDBExtension(system: ExtendedActorSystem) extends Kamon.Extension {
 
   private val openTSDBConfig = system.settings.config.getConfig("kamon.opentsdb")
   private val hbaseConfig = new org.hbase.async.Config()
-  openTSDBConfig.getConfig("hbase-client").entrySet().forEach({ entry =>
+  openTSDBConfig.getConfig("hbase-client").entrySet().asScala.foreach{ entry =>
     hbaseConfig.overrideConfig(entry.getKey, entry.getValue.unwrapped().toString)
-  })
+  }
   val sender = new DirectDataPointSender(hbaseConfig)
   protected val metricsListener = system.actorOf(DataPointGeneratingActor.props(openTSDBConfig, sender), "opentsdb-metrics-generator")
 

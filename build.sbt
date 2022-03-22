@@ -26,7 +26,9 @@ val opentsdb  = "net.opentsdb" % "opentsdb"     % "2.4.0" excludeAll(
 val hbase = "org.hbase" % "asynchbase" % "1.8.2"
 name := "kamon-opentsdb"
 parallelExecution in Test in Global := false
-crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.1")
+crossScalaVersions := Seq("2.11.8", "2.12.1")
+
+version := (version in ThisBuild).value
 
 libraryDependencies ++=
     compileScope(kamonCore, slf4jApi, opentsdb, hbase) ++
