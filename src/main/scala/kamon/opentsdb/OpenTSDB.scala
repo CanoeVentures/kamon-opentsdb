@@ -24,8 +24,8 @@ import kamon.util.ConfigTools.Syntax
 import scala.collection.JavaConverters._
 
 /**
-  * OpenTSDB Extension
-  */
+ * OpenTSDB Extension
+ */
 object OpenTSDB extends ExtensionId[OpenTSDBExtension] with ExtensionIdProvider {
   override def createExtension(system: ExtendedActorSystem): OpenTSDBExtension = new OpenTSDBExtension(system)
   override def lookup(): ExtensionId[_ <: Extension] = OpenTSDB
@@ -37,11 +37,7 @@ class OpenTSDBExtension(system: ExtendedActorSystem) extends Kamon.Extension {
   Logging(system, classOf[OpenTSDBExtension]).info("Starting the Kamon(OpenTSDB) extension")
 
   private val openTSDBConfig = system.settings.config.getConfig("kamon.opentsdb")
-  private val hbaseConfig = new org.hbase.async.Config()
-  openTSDBConfig.getConfig("hbase-client").entrySet().forEach({ entry =>
-     hbaseConfig.overrideConfig(entry.getKey, entry.getValue.unwrapped().toString)
-  })
-  val sender = new DirectDataPointSender(hbaseConfig)
+  val sender = new DirectDataPointSender(openTSDBConfig.getString("direct.quorum"))
   protected val metricsListener = system.actorOf(DataPointGeneratingActor.props(openTSDBConfig, sender), "opentsdb-metrics-generator")
 
   protected val subscriptions = openTSDBConfig.getConfig("subscriptions")
